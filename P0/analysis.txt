@@ -1,0 +1,19 @@
+Task 0:
+Two print functions, the notation is O(2)
+Executation time = 20.03 micro-seconds
+
+Task 1:
+Two nested for loops, the notation is O(2n^2)
+Executation time = 4227.16 micro-seconds
+
+Task 2:
+One for loop and one nested for loop, the notation is O(n+n^2)
+Executation time = 1574.00 micro-seconds
+
+Task 3:
+Two for loops and a sorted function, the notation is O(3n)
+Executation time = 2504.00 micro-seconds
+
+Task 4:
+Six for loops and a sorted() function, the notation is O(5n)
+Executation time = 460.84 mili-seconds
