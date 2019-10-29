@@ -2,7 +2,7 @@ class LRU_Cache(object):
 
     def __init__(self, capacity):
         self.capacity = capacity
-        self.dict_ = {}
+        self.dict_ = {}            
 
     def get(self, key):
 
@@ -13,8 +13,11 @@ class LRU_Cache(object):
 
     def set(self, key, value):
 
-        if (key not in self.dict_) or (len(self.dict_) >= self.capacity):
+        if (key not in self.dict_):
             self.dict_[key] = value
+            
+        if (len(self.dict_) > self.capacity):
+            self.dict_ = {}
             
 our_cache = LRU_Cache(5)
 

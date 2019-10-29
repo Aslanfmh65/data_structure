@@ -20,55 +20,38 @@ class Group(object):
         return self.name
 
 def is_user_in_group(user, group):
-    """
-    Return True if user is in the group, False otherwise.
-
-    Args:
-      user(str): user name/id
-      group(class:Group): group to check user membership against
-    """
-    if group in parent.get_groups():
-        if user in parent.get_users():
-            return True
-        else:
-            return False
-    elif group in child.get_groups():
-        if user in child.get_users():
-            return True
-        else: False
+    
+    users = group.get_users()
+    groups = group.get_groups()
+    
+    if user in users:
+        print('True: User is found in the group!')
+        return
     else:
-        if user in sub_child.get_users():
-            return True
-        else:
-            return False
+        for group in groups:
+            is_user_in_group(user,group)
+            return
+    print("False: User is not in the group")
+    return False
 
 parent = Group("parent")
 child = Group("child")
-sub_child = Group('subchild')
+sub_child = Group("subchild")
 
 sub_child_user = "sub_child_user"
 sub_child.add_user(sub_child_user)
 
+child.add_group(sub_child)
+parent.add_group(child)
 
-print('Normal Cases:')
-## Test 1
-print(is_user_in_group(user='parent_user', group=parent))
-# False
+# Test 1
+is_user_in_group(sub_child_user, parent)
 
-## Test 2
-print(is_user_in_group(user='child_user', group=parent))
-# False
+# Test 2
+user = "This is test 2"
+child.add_user(user)
+is_user_in_group(user, parent)
 
-## Test 3
-print(is_user_in_group(user='sub_child_user', group=parent), '\n')
-# True
-
-# Edge Cases:
-print('Edge Cases:')
-## Test 4
-print(is_user_in_group(user='', group=parent))
-# False
-
-## Test 5
-print(is_user_in_group(user='', group=child))
-# False
+# Test 3
+user = "Hello world!"
+is_user_in_group(user, parent)

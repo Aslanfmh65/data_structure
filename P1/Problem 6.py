@@ -43,7 +43,7 @@ class LinkedList:
         
         node = self.head
         while node:
-            print(node.value, end = ' ')
+            print(node.value, end=' ')
             node = node.next
 
 def intersection(llist1, llist2):
@@ -51,6 +51,7 @@ def intersection(llist1, llist2):
     intersection_list = LinkedList()
     while node1:
         if llist2.search(node1) and intersection_list.search(node1) is None:
+#         if llist2.search(node1):
             intersection_list.append(node1.value)
         node1 = node1.next
     return intersection_list
@@ -81,13 +82,12 @@ linked_list1.create_linked_list(llist1)
 linked_list2.create_linked_list(llist2)
 
 intersection_list = intersection(linked_list1, linked_list2)
-print("\nTest 1 Intersection set (unique): ")
+print("Intersection set (unique): ")
 intersection_list.printNode()
 
 union_list = union(linked_list1, linked_list2)
-print("\nTest 1 Union set (unique): ")
+print("\nUnion set (unique): ")
 union_list.printNode()
-
 
 ## Test 2
 llist3 = [3,2,4,35,6,65,6,4,3,23]
@@ -100,11 +100,11 @@ linked_list3.create_linked_list(llist3)
 linked_list4.create_linked_list(llist4)
 
 intersection_list = intersection(linked_list3, linked_list4)
-print("\nTest 2 Intersection set (unique): ")
+print("Intersection set (unique): ")
 intersection_list.printNode()
 
 union_list = union(linked_list3, linked_list4)
-print("\nTest 2 Union set (unique): ")
+print("\nUnion set (unique): ")
 union_list.printNode()
 
 ## Test 3
@@ -118,9 +118,9 @@ linked_list5.create_linked_list(llist5)
 linked_list6.create_linked_list(llist6)
 
 intersection_list = intersection(linked_list5, linked_list6)
-print("\nTest 3 Intersection set (unique): ")
+print("Intersection set (unique): ")
 intersection_list.printNode()
 
 union_list = union(linked_list5, linked_list6)
-print("\nTest 3 Union set (unique): ")
+print("\nUnion set (unique): ")
 union_list.printNode()

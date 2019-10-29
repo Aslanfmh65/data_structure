@@ -1,340 +1,174 @@
-#%% Imports and function declaration
-import sys
-import collections
+from collections import deque
 
-
-class Node(object):
-
-    def __init__(self, char=None, freq=None):
+# Linked list
+class Node:
+    def __init__(self, char, freq):
         self.char = char
         self.freq = freq
         self.left = None
         self.right = None
 
-    @staticmethod
-    def fusion_nodes(node_1, node_2):
-        """
-        Combines tow nodes together, by using then as the leafs of a new node
-        :param node_1: one of the nodes to fuse
-        :param node_2: another node to fuse
-        :return: nodes fused, being the leaves of a third parent node
-        """
-        fused_node = Node()
+# Define queue data structure
+class Queue():
+    def __init__(self):
+        self.d = deque()
+        
+    def enq(self, value):
+        self.d.append(value)
 
-        if node_1.freq <= node_2.freq:
-            fused_node.left = node_1
-            fused_node.right = node_2
+    def deq(self):
+        if len(self.d) > 0:
+            pop_value = self.d.popleft()
+            return pop_value
         else:
-            fused_node.left = node_1
-            fused_node.right = node_2
-
-        fused_node.freq = node_1.freq + node_2.freq
-
-        return fused_node
-
-    def __repr__(self):
-        return "Node of character: {} | frequency: {}".format(self.char, self.freq)
-
-
-class Queue(object):
-    def __init__(self, string):
-        _ = collections.Counter(string)
-        self.arr = [Node(char=letter, freq=_[letter]) for letter in _]
-        self.sort()
-
-    def sort(self) -> None:
-        """
-        Sorts the queue by frequency
-        :return: None
-        """
-        self.arr = sorted(self.arr, key=lambda x: x.freq, reverse=True)
-
-    def fuse_step(self) -> None:
-        """
-        Applies fusion of two nodes present on the queue; see Node.fusion_nodes()
-        :return: None
-        """
-        low_node_1 = self.arr.pop()
-        low_node_2 = self.arr.pop()
-
-        self.arr.append(Node.fusion_nodes(node_1=low_node_1, node_2=low_node_2))
-        self.sort()
-
-
-class Tree(object):
-    def __init__(self, queue: Queue):
-        while len(queue.arr) > 1:
-            queue.fuse_step()
-
-        self.root = queue.arr[0]
-
-    def binaryze(self) -> None:
-        """
-        Binarizes a Tree, by changing Node.char information for a 1/0 value;  recursive launcher
-        :return: None
-        """
-
-        self.root = self._add_binary_code(self.root)
-        self.root.freq = 0
-
-    @staticmethod
-    def _add_binary_code(node: Node) -> Node:
-        """
-        Binarizes a Tree, by changing Node.char information for a 1/0 value
-        :param node: node to modify
-        :return: node binarized
-        """
-        if (node.left is None) and (node.right is None):
-            return node
-
-        if node.left is not None:
-            node.left.freq = 1
-            node.left = Tree._add_binary_code(node.left)
-
-        if node.right is not None:
-            node.right.freq = 0
-            node.right = Tree._add_binary_code(node.right)
-
-        return node
-
-
-class HuffmanEncoder(object):
-    def __init__(self, tree: Tree):
-        self.table = self._create_encoding_table(base_code='', node=tree.root)
-        self.encode_dict = None
-        self.decode_dict = None
-
-        self._create_encoder()
-        self._create_decoder()
-
-    def _create_encoder(self) -> None:
-        """
-        Encoder dictionary constructor
-        :return: None
-        """
-        encoder_dict = dict()
-
-        for i, element in enumerate(self.table):
-            encoder_dict[element[0]] = element[1]
-
-        self.encode_dict = encoder_dict
-
-    def _create_decoder(self) -> None:
-        """
-        Decoder dictionary constructor
-        :return: None
-        """
-        decoder_dict = dict()
-
-        for i, element in enumerate(self.table):
-            decoder_dict[element[1]] = element[0]
-
-        self.decode_dict = decoder_dict
-
-    def encode(self, text: str) -> str:
-        """
-        Text encoding method, specific for each encoder
-        :param text: text to encode, same as used to construct Huffman Encoder
-        :return: text encoded with Huffman algorithm
-        """
-        coded_text = ''
-        for char in text:
-            coded_text += self.encode_dict[char]
-
-        return coded_text
-
-    def decode(self, encoded_text: str) -> str:
-        """
-        Text decoding method, specific for each encoder
-        :param encoded_text: text to decoded, same as used to construct Huffman Encoder
-        :return: text decoded with Huffman algorithm
-        """
-        decoded_text = ''
-
-        while len(encoded_text) > 0:
-            i_decoder = 1
-            while True:
-                if encoded_text[:i_decoder] in self.decode_dict.keys():
-                    decoded_text += self.decode_dict[encoded_text[:i_decoder]]
-                    encoded_text = encoded_text[i_decoder:]
-                    break
-                i_decoder += 1
-
-        return decoded_text
-
-    @staticmethod
-    def _create_encoding_table(base_code: str, node: Node) -> list:
-        """
-        Creates the basic encoding table by traversing the binary-tree
-        :param base_code: base code from previous level of the binary tree
-        :param node: node of the tree to search characters on
-        :return: list of the characters and their corresponding binary encoding
-        """
-        if (node.left is None) and (node.right is None):
-            return [(node.char, base_code + str(node.freq))]
-
-        if node.freq == -1:
-            current_code = ''
-        else:
-            current_code = base_code + str(node.freq)
-
-        coding_dict = []
-
-        if node.char is not None:
-            coding_dict.append((node.char, current_code + str(node.freq)))
-
-        if node.left is not None:
-            coding_dict.extend(HuffmanEncoder._create_encoding_table(current_code, node.left))
-
-        if node.right is not None:
-            coding_dict.extend(HuffmanEncoder._create_encoding_table(current_code, node.right))
-
-        return coding_dict
-
-
-def huffman_encoding(data: str) -> (str, HuffmanEncoder):
-    """
-    Huffman encoding method
-    :param data: text desired to be codified
-    :return: text encoded and the corresponding text specific encoder
-    """
-
-    if len(data) == 0:
-        print("Please introduce a non null string")
-        return
-
-    else:
-        temp_queue = Queue(string=data)
-        temp_tree = Tree(queue=temp_queue)
-        temp_tree.binaryze()
-        temp_encoder = HuffmanEncoder(temp_tree)
-
-        return temp_encoder.encode(data), temp_encoder
-
-
-def huffman_decoding(data: str, encoder: HuffmanEncoder) -> str:
-    """
-    Huffman decoding method
-    :param data: text desired to be decoded
-    :param encoder: Huffman encoder used to initially encode the text
-    :return: text decoded, i.e. originally restored
-    """
-
-    return encoder.decode(data)
-
-
-#%% Testing official
-if __name__ == "__main__":
-
-    # Normal Cases:
-    # Case 1
-    print('Case 1:')
-
-    a_great_sentence = "The bird is the word"
-
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    # The size of the data is: 69
-    print("The content of the data is: {}\n".format(a_great_sentence))
-    # The content of the data is: The bird is the word
-
-    encoded_data, tree = huffman_encoding(a_great_sentence)
-
-    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
-    # The size of the encoded data is: 36
-    print("The content of the encoded data is: {}\n".format(encoded_data))
-    # The content of the encoded data is: 0001011011101000111001010010011000000001000011101110100110001111010010
-
-    decoded_data = huffman_decoding(encoded_data, tree)
-
-    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
-    # The size of the decoded data is: 69
-    print("The content of the encoded data is: {}\n".format(decoded_data))
-    # The content of the encoded data is: The bird is the word
-
-    # Case 2
-    print('Case 2:')
-
-    a_great_sentence = "I just want to have fun coding"
-
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    # The size of the data is: 79
-    print("The content of the data is: {}\n".format(a_great_sentence))
-    # The size of the data is: 79
-
-    encoded_data, tree = huffman_encoding(a_great_sentence)
-
-    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
-    # The size of the encoded data is: 40
-    print("The content of the encoded data is: {}\n".format(encoded_data))
-    # The content of the encoded data is: 00110110011100010010010111001011000000010111101100111010101000010110100
-    # 0110100100010000110111010010111101100000001101
-
-    decoded_data = huffman_decoding(encoded_data, tree)
-
-    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
-    # The size of the decoded data is: 79
-    print("The content of the encoded data is: {}\n".format(decoded_data))
-    # The content of the encoded data is: I just want to have fun coding
-
-    # Case 3
-    print('Case 3:')
-
-    a_great_sentence = "The sun shines and I go to the beach"
-
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    # The size of the data is: 85
-    print("The content of the data is: {}\n".format(a_great_sentence))
-    # The content of the data is: The sun shines and I go to the beach
-
-    encoded_data, tree = huffman_encoding(a_great_sentence)
-
-    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
-    # The size of the encoded data is: 44
-    print("The content of the encoded data is: {}\n".format(encoded_data))
-    # The content of the encoded data is: 1001011011101000110011001001000111010000001011100010100110010100010110110
-    # 01101110000001000010000001000011101110110100111001110101110
-
-    decoded_data = huffman_decoding(encoded_data, tree)
-
-    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
-    # The size of the decoded data is: 85
-    print("The content of the encoded data is: {}\n".format(decoded_data))
-    # The content of the encoded data is: The sun shines and I go to the beach
-
-    # Edge Cases
-    # Case 4
-    print('Edge Cases:')
-    print('Case 4:')
-
-    a_not_so_great_sentence = "aaa"
-
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_not_so_great_sentence)))
-    # The size of the data is: 52
-    print("The content of the data is: {}\n".format(a_not_so_great_sentence))
-    # The content of the data is: aaa
-
-    encoded_data, tree = huffman_encoding(a_not_so_great_sentence)
-
-    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
-    # The size of the encoded data is: 24
-    print("The content of the encoded data is: {}\n".format(encoded_data))
-    # The content of the encoded data is: 000
-
-    decoded_data = huffman_decoding(encoded_data, tree)
-
-    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
-    # The size of the decoded data is: 52
-    print("The content of the encoded data is: {}\n".format(decoded_data))
-    # The content of the encoded data is: aaa
-
-    # Case 5
-    print('Case 5:')
-    a_not_so_great_sentence = ""
-
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_not_so_great_sentence)))
-    # The size of the data is: 49
-    print("The content of the data is: {}\n".format(a_not_so_great_sentence))
-    # The content of the data is:
-
-    huffman_encoding(a_not_so_great_sentence)
-    # Please introduce a non null string
+            return None
+        
+    def get_len(self):
+        return len(self.d)
+
+# Binary tree
+class Tree:
+    def __init__(self):
+        self.q = []
+        
+        self.binary_dict = {}
+        self.queue = Queue()
+        self.queue_equal = Queue()
+        self.queue_unequal = Queue()
+        
+    def frequency(self, input_string):
+        keys = list(set([i for i in input_string]))
+        values = [0] * len(keys)
+        
+        for i in input_string:
+            values[keys.index(i)] += 1
+            
+        char_freq = {k:v for k,v in zip(keys,values)}
+        char_freq = sorted(char_freq.items(), key=lambda x:x[1])
+        
+        return char_freq
+    
+    def push_to_queue(self, char_freq):
+        for item in char_freq:
+            node = Node(item[0], item[1])
+            self.queue.enq(node)
+            
+    def merge_to_root(self):
+        while (self.queue.get_len() > 1):
+            node1 = self.queue.deq()
+            node2 = self.queue.deq()
+            freq = node1.freq + node2.freq
+            root_node = Node(None, freq)
+            root_node.left = node1
+            root_node.right = node2
+            self.queue.enq(root_node)
+            
+            
+#     def merge_to_root_update(self):
+#         count = 0
+#         while True: 
+             
+#             node1 = self.queue.deq()
+#             node2 = self.queue.deq()
+            
+#             if node1.freq == node2.freq:
+                
+#                 freq = node1.freq + node2.freq
+#                 root_node = Node(None, freq)
+#                 root_node.left = node1
+#                 root_node.right = node2
+#                 self.queue.enq(root_node)
+                
+#                 self.queue.sort(reverse=True)
+#                 count += 1
+#                 print(count)
+                
+#             else:
+#                 self.queue.enq(node1)
+#                 self.queue.enq(node2)
+                
+#                 self.queue.sort(reverse=True)
+#                 count -= 1
+                
+#             if count == 0:
+#                 while (self.queue.get_len() > 1):
+#                     node1 = self.queue.deq()
+#                     node2 = self.queue.deq()
+#                     freq = node1.freq + node2.freq
+#                     root_node = Node(None, freq)
+#                     root_node.left = node1
+#                     root_node.right = node2
+                    
+#                     self.queue.enq(root_node)
+#                     self.queue.sort(reverse=True)
+#                 return
+            
+    def assign_binary(self, root, binary_code):
+        if root is None:
+            return
+        
+        if root.char is not None:
+            self.binary_dict[root.char] = binary_code
+            return
+        
+        # recursion 
+        self.assign_binary(root.left, binary_code + "0")
+        self.assign_binary(root.right, binary_code + "1")
+        
+    def traverse(self):
+        root = self.queue.deq()
+        binary_code = ""
+        self.assign_binary(root, binary_code)
+
+def encoding(input_string):
+    
+    tree = Tree()
+    # sort a string into tuple based on frequency
+    char_freq = tree.frequency(input_string)
+
+    # push each tuple into queue data structure
+    tree.push_to_queue(char_freq)
+
+    # merge two nodes into one root and push into queue 
+    tree.merge_to_root()
+
+    # assign binary code to left and right child of root
+    tree.traverse()
+
+    # show the dictionary after Huffman coding
+    dict_ = tree.binary_dict
+    
+    encoded_text = [dict_[i] for i in input_string]
+    encoded_text = '-'.join(encoded_text)
+    
+    return encoded_text, dict_
+
+def decoding(encoded_text, dict_):
+    code = [i for i in encoded_text.split('-')]
+    dict_ = {v:k for k,v in dict_.items()}
+    text = [dict_[j] for j in code]
+    return ''.join(text)
+
+## Test 1
+input_string = "Bird is a world"
+[encoded_text, dict_] = encoding(input_string)
+decoded_text = decoding(encoded_text, dict_)
+
+print(encoded_text)
+print(decoded_text)
+
+## Test 2
+input_string = "Udacity is awesome"
+[encoded_text, dict_] = encoding(input_string)
+decoded_text = decoding(encoded_text, dict_)
+
+print(encoded_text)
+print(decoded_text)
+
+## Test 3
+input_string = "Huffman code is hard"
+[encoded_text, dict_] = encoding(input_string)
+decoded_text = decoding(encoded_text, dict_)
+
+print(encoded_text)
+print(decoded_text)
