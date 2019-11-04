@@ -19,24 +19,25 @@ class Blockchain:
     def __init__(self):
         self.tail = None
         
-    def append(self, new_data):
+    def append(self, new_block):
         if self.tail is None:
-            self.tail = Block(time.time(), new_data, previous_hash=None)
-            
+            self.tail = Block(time.time(), new_block, None)
         else:
-            self.tail = Block(time.time(), new_data, self.tail)
+            self.tail = Block(time.time(), new_block, self.tail)
             
-    def search(self, search_data):
+    def search(self, find_block):
         if self.tail is None:
-            print("Block is empty")
-            return 
-        block = self.tail
-        while block:
-            if block.data == search_data:
-                return block
-            block = block.previous_hash
+            return None
+        else:
+            block = self.tail
+            while block:
+                if block.data == find_block:
+                    return print(block.data)
+                else:
+                    block = block.previous_hash
             
-        return None
+            print("This block cannot be found in blockchain")
+            return
 
 blockchain = Blockchain()
 
@@ -46,10 +47,13 @@ blockchain.append('Income: 10 | Outcome: -20')
 blockchain.append('Income: 80 | Outcome: -40')
 
 ## Test 1
-print(blockchain.search('Income: 10 | Outcome: -20').data)
+blockchain.search('Income: 10 | Outcome: -20')
 
 ## Test 2
-print(blockchain.search('Income: 80 | Outcome: -40').data)
+blockchain.search('Income: 80 | Outcome: -40')
 
 ## Test 3
-print(blockchain.search('Income: 40 | Outcome: -20').data)
+blockchain.search('Income: 40 | Outcome: -20')
+
+## Test 3
+blockchain.search('Income 100 | Outcome: -100')
