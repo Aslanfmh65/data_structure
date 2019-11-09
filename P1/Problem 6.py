@@ -9,6 +9,13 @@ class LinkedList:
     
     def create_linked_list(self, llist):
         
+        if type(llist) != list:
+            print("Invalid input")
+            return
+        elif len(llist) is 0:
+            print("Empty list")
+            return
+        
         if self.head is None:
             self.head = Node(llist[0])
         
@@ -71,7 +78,8 @@ def union(llist1, llist2):
         node2 = node2.next
     return union_list
 
-## Test 1
+print("\n")
+print("Test 1")
 llist1 = [3,2,4,35,6,65,6,4,3,21]
 llist2 = [6,32,4,9,6,1,11,21,1]
 
@@ -86,10 +94,11 @@ print("Intersection set (unique): ")
 intersection_list.printNode()
 
 union_list = union(linked_list1, linked_list2)
-print("\nUnion set (unique): ")
+print("Union set (unique): ")
 union_list.printNode()
 
-## Test 2
+print("\n")
+print("Test 2")
 llist3 = [3,2,4,35,6,65,6,4,3,23]
 llist4 = [1,7,8,9,11,21,1]
 
@@ -104,10 +113,11 @@ print("Intersection set (unique): ")
 intersection_list.printNode()
 
 union_list = union(linked_list3, linked_list4)
-print("\nUnion set (unique): ")
+print("Union set (unique): ")
 union_list.printNode()
 
-## Test 3
+print("\n")
+print("Test 3")
 llist5 = [1,2,3,4,5,4,4,4,4]
 llist6 = [4,4,4,4,4,9,9,9,9]
 
@@ -122,5 +132,43 @@ print("Intersection set (unique): ")
 intersection_list.printNode()
 
 union_list = union(linked_list5, linked_list6)
+print("Union set (unique): ")
+union_list.printNode()
+
+print("\n")
+print("Edge Test 1: empty input")
+llist7 = []
+llist8 = []
+
+linked_list7 = LinkedList()
+linked_list8 = LinkedList()
+
+linked_list7.create_linked_list(llist7)
+linked_list8.create_linked_list(llist8)
+
+intersection_list = intersection(linked_list7, linked_list8)
+print("\nIntersection set (unique): ")
+intersection_list.printNode()
+
+union_list = union(linked_list7, linked_list8)
+print("\nUnion set (unique): ")
+union_list.printNode()
+
+print("\n")
+print("Edge Test 2: invalid input")
+llist7 = {1:[],2:[],3:[],4:[],5:[],4:[],4:[],4:[],4:[]}
+llist8 = (1,2)
+
+linked_list7 = LinkedList()
+linked_list8 = LinkedList()
+
+linked_list7.create_linked_list(llist7)
+linked_list8.create_linked_list(llist8)
+
+intersection_list = intersection(linked_list7, linked_list8)
+print("\nIntersection set (unique): ")
+intersection_list.printNode()
+
+union_list = union(linked_list7, linked_list8)
 print("\nUnion set (unique): ")
 union_list.printNode()

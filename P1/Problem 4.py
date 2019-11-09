@@ -21,6 +21,14 @@ class Group(object):
 
 def is_user_in_group(user, group):
     
+    if user is None or group is None:
+        print("Empty input")
+        return
+    
+    elif type(user) != str:
+        print("Invalid input")
+        return
+    
     users = group.get_users()
     groups = group.get_groups()
     
@@ -44,14 +52,27 @@ sub_child.add_user(sub_child_user)
 child.add_group(sub_child)
 parent.add_group(child)
 
-# Test 1
+print("\n")
+print("Test 1")
 is_user_in_group(sub_child_user, parent)
 
-# Test 2
+print("\n")
+print("Test 2")
 user = "This is test 2"
 child.add_user(user)
 is_user_in_group(user, parent)
 
-# Test 3
+print("\n")
+print("Test 3")
 user = "Hello world!"
+is_user_in_group(user, parent)
+
+print("\n")
+print("Edge test 1: empty input")
+user = None
+is_user_in_group(user, parent)
+
+print("\n")
+print("Edge test 2: invalid input")
+user = 123456
 is_user_in_group(user, parent)

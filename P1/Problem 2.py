@@ -1,24 +1,13 @@
 import os
 
 def find_files(suffix, path):
-    """
-    Find all files beneath path with file name suffix.
-
-    Note that a path may contain further subdirectories
-    and those subdirectories may also contain further subdirectories.
-
-    There are no limit to the depth of the subdirectories can be.
-
-    Args:
-      suffix(str): suffix if the file name to be found
-      path(str): path of the file system
-
-    Returns:
-       a list of paths
-    """
+    if suffix is None or path is None:
+        print("Empty input")
+        return
     
-    if os.path.exists(path) is False:
-        return []
+    elif os.path.exists(path) is False:
+        print("Invalid path")
+        return
         
     contents = os.listdir(path)
     
@@ -34,7 +23,20 @@ def find_files(suffix, path):
         
     return suffix_files
 
+print("\n")
+print("Normal test")
 suffix = '.c'
 path = os.getcwd()
-files = find_files(suffix, path)
-print(files)
+print(find_files(suffix, path))
+
+print("\n")
+print("Edge Test 1: empty input")
+suffix = None
+path = os.getcwd()
+find_files(suffix, path)
+
+print("\n")
+print("Edge Test 2: invalid address")
+suffix = '.c'
+path = 'home/user'
+find_files(suffix, path)

@@ -122,6 +122,15 @@ class Tree:
 
 def encoding(input_string):
     
+    if type(input_string) != str:
+        print("Invalid input")
+        return [-1,-1]
+    
+    elif input_string is None or len(input_string) == 0:
+        print("Empty input")
+        return [-1,-1]
+    
+    
     tree = Tree()
     # sort a string into tuple based on frequency
     char_freq = tree.frequency(input_string)
@@ -144,12 +153,22 @@ def encoding(input_string):
     return encoded_text, dict_
 
 def decoding(encoded_text, dict_):
+    
+    if type(input_string) != str:
+        print("Invalid input")
+        return [-1,-1]
+    
+    elif input_string is None or len(input_string) == 0:
+        print("Empty input")
+        return [-1,-1]
+    
     code = [i for i in encoded_text.split('-')]
     dict_ = {v:k for k,v in dict_.items()}
     text = [dict_[j] for j in code]
     return ''.join(text)
 
-## Test 1
+print("\n")
+print("Test 1")
 input_string = "Bird is a world"
 [encoded_text, dict_] = encoding(input_string)
 decoded_text = decoding(encoded_text, dict_)
@@ -157,7 +176,8 @@ decoded_text = decoding(encoded_text, dict_)
 print(encoded_text)
 print(decoded_text)
 
-## Test 2
+print("\n")
+print("Test 2")
 input_string = "Udacity is awesome"
 [encoded_text, dict_] = encoding(input_string)
 decoded_text = decoding(encoded_text, dict_)
@@ -165,10 +185,23 @@ decoded_text = decoding(encoded_text, dict_)
 print(encoded_text)
 print(decoded_text)
 
-## Test 3
-input_string = "Huffman code is hard"
+print("\n")
+print("Test 3")
+input_string = "Huffman code is a famous algorithm"
 [encoded_text, dict_] = encoding(input_string)
 decoded_text = decoding(encoded_text, dict_)
 
 print(encoded_text)
 print(decoded_text)
+
+print("\n")
+print("Edge Test 1: Empty input")
+input_string = ''
+[encoded_text, dict_] = encoding(input_string)
+decoded_text = decoding(encoded_text, dict_)
+
+print("\n")
+print("Edge Test 2: Invalid input")
+input_string = 123456789
+[encoded_text, dict_] = encoding(input_string)
+decoded_text = decoding(encoded_text, dict_)
