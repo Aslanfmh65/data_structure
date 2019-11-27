@@ -1,3 +1,4 @@
+import sys
 from collections import deque
 
 # Linked list
@@ -27,6 +28,7 @@ class Queue():
         return len(self.d)
 
 # Binary tree
+
 class Tree:
     def __init__(self):
         self.q = []
@@ -63,46 +65,6 @@ class Tree:
             root_node.right = node2
             self.queue.enq(root_node)
             
-            
-#     def merge_to_root_update(self):
-#         count = 0
-#         while True: 
-             
-#             node1 = self.queue.deq()
-#             node2 = self.queue.deq()
-            
-#             if node1.freq == node2.freq:
-                
-#                 freq = node1.freq + node2.freq
-#                 root_node = Node(None, freq)
-#                 root_node.left = node1
-#                 root_node.right = node2
-#                 self.queue.enq(root_node)
-                
-#                 self.queue.sort(reverse=True)
-#                 count += 1
-#                 print(count)
-                
-#             else:
-#                 self.queue.enq(node1)
-#                 self.queue.enq(node2)
-                
-#                 self.queue.sort(reverse=True)
-#                 count -= 1
-                
-#             if count == 0:
-#                 while (self.queue.get_len() > 1):
-#                     node1 = self.queue.deq()
-#                     node2 = self.queue.deq()
-#                     freq = node1.freq + node2.freq
-#                     root_node = Node(None, freq)
-#                     root_node.left = node1
-#                     root_node.right = node2
-                    
-#                     self.queue.enq(root_node)
-#                     self.queue.sort(reverse=True)
-#                 return
-            
     def assign_binary(self, root, binary_code):
         if root is None:
             return
@@ -121,15 +83,6 @@ class Tree:
         self.assign_binary(root, binary_code)
 
 def encoding(input_string):
-    
-    if type(input_string) != str:
-        print("Invalid input")
-        return [-1,-1]
-    
-    elif input_string is None or len(input_string) == 0:
-        print("Empty input")
-        return [-1,-1]
-    
     
     tree = Tree()
     # sort a string into tuple based on frequency
@@ -155,11 +108,11 @@ def encoding(input_string):
 def decoding(encoded_text, dict_):
     
     if type(input_string) != str:
-        print("Invalid input")
+        print("Error: Invalid input")
         return [-1,-1]
     
     elif input_string is None or len(input_string) == 0:
-        print("Empty input")
+        print("Error: Empty input")
         return [-1,-1]
     
     code = [i for i in encoded_text.split('-')]
@@ -167,41 +120,74 @@ def decoding(encoded_text, dict_):
     text = [dict_[j] for j in code]
     return ''.join(text)
 
+def huffman(input_string):
+    
+    if type(input_string) != str:
+        print("Invalid input")
+        return [-1,-1]
+    
+    elif input_string is None or len(input_string) == 0:
+        print("Empty input")
+        return [-1,-1]
+    
+    elif len(set(input_string)) == 1:
+        return '0'*len(input_string) + '/'+'1'*len(input_string)
+    
+
+    [encoded_text, dict_] = encoding(input_string)
+    decoded_text = decoding(encoded_text, dict_)
+    
+    input_size = sys.getsizeof(input_string)
+    encoded_text = ''.join(encoded_text.split('-'))
+    encoded_size = sys.getsizeof(int(encoded_text, base=2))
+    decoded_size = sys.getsizeof(decoded_text)
+    
+    return [input_size, encoded_text, encoded_size, decoded_size, decoded_text]
+
+## Test 1
 print("\n")
-print("Test 1")
-input_string = "Bird is a world"
-[encoded_text, dict_] = encoding(input_string)
-decoded_text = decoding(encoded_text, dict_)
+input_string = "The bird is a word"
+[input_size, encoded_text, encoded_size, decoded_size, decoded_text] = huffman(input_string)
+print("The size of the data is: {}".format(input_size))
+print("The content of the data is: {}".format(input_string))
+print("The size of the encoded data is: {}".format(encoded_size))
+print("The content of the encoded data is: {}".format(encoded_text))
+print("The size of the decoded data is: {}".format(decoded_size))
+print("The content of the encoded data is: {}".format(decoded_text))
 
-print(encoded_text)
-print(decoded_text)
-
+## Test 2
 print("\n")
-print("Test 2")
-input_string = "Udacity is awesome"
-[encoded_text, dict_] = encoding(input_string)
-decoded_text = decoding(encoded_text, dict_)
+input_string = "Udacity is great"
+[input_size, encoded_text, encoded_size, decoded_size, decoded_text] = huffman(input_string)
+print("The size of the data is: {}".format(input_size))
+print("The content of the data is: {}".format(input_string))
+print("The size of the encoded data is: {}".format(encoded_size))
+print("The content of the encoded data is: {}".format(encoded_text))
+print("The size of the decoded data is: {}".format(decoded_size))
+print("The content of the encoded data is: {}".format(decoded_text))
 
-print(encoded_text)
-print(decoded_text)
-
+## Test 3
 print("\n")
-print("Test 3")
 input_string = "Huffman code is a famous algorithm"
-[encoded_text, dict_] = encoding(input_string)
-decoded_text = decoding(encoded_text, dict_)
+[input_size, encoded_text, encoded_size, decoded_size, decoded_text] = huffman(input_string)
+print("The size of the data is: {}".format(input_size))
+print("The content of the data is: {}".format(input_string))
+print("The size of the encoded data is: {}".format(encoded_size))
+print("The content of the encoded data is: {}".format(encoded_text))
+print("The size of the decoded data is: {}".format(decoded_size))
+print("The content of the encoded data is: {}".format(decoded_text))
 
-print(encoded_text)
-print(decoded_text)
-
+## Edge Test 1: Empty input
 print("\n")
-print("Edge Test 1: Empty input")
 input_string = ''
-[encoded_text, dict_] = encoding(input_string)
-decoded_text = decoding(encoded_text, dict_)
+huffman(input_string)
 
+## Edge Test 2: Invalid input
 print("\n")
-print("Edge Test 2: Invalid input")
 input_string = 123456789
-[encoded_text, dict_] = encoding(input_string)
-decoded_text = decoding(encoded_text, dict_)
+huffman(input_string)
+
+## Edge Test 3: Repeated string input
+print("\n")
+input_string = 'aaaaa'
+print(huffman(input_string))
